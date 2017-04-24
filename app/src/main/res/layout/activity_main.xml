@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context="com.game.a2048.MainActivity">
 <LinearLayout
+    android:background="@color/colorCyan"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
@@ -14,11 +15,13 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="36dp"
         android:text="Score:"
         />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textSize="36dp"
         android:id="@+id/Scoretv"
         />
 </LinearLayout>

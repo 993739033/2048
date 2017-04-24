@@ -1,9 +1,12 @@
 package com.game.a2048;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
@@ -70,8 +73,10 @@ public class GameView extends GridLayout {
     }
 
     private Card[][] Cards = new Card[4][4];
-    private List<Point> emptyPoint =new ArrayList<>();
-    private void startGame(){
+    private List<Point> emptyPoint = new ArrayList<>();
+
+    private void startGame() {
+        MainActivity.getMainActivity().clearScore();
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
                 Cards[x][y].setNum(0);
@@ -80,36 +85,67 @@ public class GameView extends GridLayout {
         }
         getRandomNum();
         getRandomNum();
-        getRandomNum();
-        getRandomNum();
-        getRandomNum();
-        getRandomNum();
 
 
     }
-    private void getRandomNum(){
+
+    private void getRandomNum() {
         emptyPoint.clear();
-        for (int x=0;x<4;x++){
-            for (int y =0;y<4;y++) {
-               if(Cards[x][y].getNum()<=0){
-                  Point point = new Point(x,y);
-                   emptyPoint.add(point);
-                   Log.d("size", String.valueOf(emptyPoint.size())+">>>>>>>");
-               }
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                if (Cards[x][y].getNum() <= 0) {
+                    Point point = new Point(x, y);
+                    emptyPoint.add(point);
+                }
             }
+        }
+        if (emptyPoint.size()!=0) {
+            Point point = emptyPoint.remove((int) (Math.random() * (emptyPoint.size() - 1)));
+            Cards[point.x][point.y].setNum(Math.random() > 0.1 ? 2 : 4);
+        }else{
+            Checkout();
 
         }
-        Log.d("size", String.valueOf(emptyPoint.size()));
-        Point  point = emptyPoint.remove((int)(Math.random()*(emptyPoint.size()-1)));
-        Cards[point.x][point.y].setNum(Math.random()>0.1?2:4);
+
 
     }
 
 
-    private int offsetX,offsetY;
+    private int offsetX, offsetY;
+    private void Checkout(){
+        boolean complete=true;
+
+        ALL:for (int x=0;x<3;x++) {
+            for (int y=0;y<3;y++) {
+                if ((Cards[x][y].equals(Cards[x+1][y]))||(Cards[x][y].equals(Cards[x][y+1])))
+                {
+                  complete=false;
+                    break ALL;
+
+                }
+            }
+        }
+        if (complete){
+            new AlertDialog.Builder(getContext()).setTitle("GAME OVER").setMessage("YOU SCORE:"+MainActivity.getMainActivity().getScore()+"\n"+"PLAY AGAIN?")
+                    .setNegativeButton("OUT", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            System.exit(0);
+                        }
+                    })
+                    .setPositiveButton("RESTART", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                   startGame();
+                }
+            }).show();
+
+        }
+
+
+    }
 
     private void initView(Context context) {
-
         setBackgroundColor(0xffbbada0);
         setColumnCount(4);
 
@@ -129,14 +165,18 @@ public class GameView extends GridLayout {
                         if (Math.abs(offsetX) > Math.abs(offsetY)) {
                             if (offsetX > 5) {
                                 swipeRight();
+                                getRandomNum();
                             } else if (offsetX < -5) {
                                 swipeLeft();
+                                getRandomNum();
                             }
-                            }else {
+                        } else {
                             if (offsetY > 5) {
                                 swipeDown();
+                                getRandomNum();
                             } else if (offsetY < -5) {
                                 swipeUp();
+                                getRandomNum();
                             }
                         }
                         break;
@@ -148,24 +188,25 @@ public class GameView extends GridLayout {
     }
 
     private void swipeLeft() {
-        for (int y=0;y<4;y++) {
-            for (int x=0;x<3;x++) {
-                if (Cards[y][x+1].getNum()>0){
-                  if (Cards[y][x].getNum()<=0){
-                    Cards[y][x].setNum(Cards[y][x+1].getNum());
-                      Cards[y][x+1].setNum(0);
+        for (int y = 0; y < 4; y++) {
+            for (int x = 0; x < 3; x++) {
+                if (Cards[y][x + 1].getNum() > 0) {
+                    if (Cards[y][x].getNum() <= 0) {
+                        Cards[y][x].setNum(Cards[y][x + 1].getNum());
+                        Cards[y][x + 1].setNum(0);
 
-                       if(x>0&&(Cards[y][x-1].getNum()==0||Cards[y][x-1].equals(Cards[y][x]))){
-                          x-=2;
-                      }
-                  }else if (Cards[y][x].equals(Cards[y][x+1])){
-                      Cards[y][x].setNum(Cards[y][x].getNum()*2);
-                      Cards[y][x+1].setNum(0);
-                      //TODO 这里可能会有bug产生
+                        if (x > 0 && (Cards[y][x - 1].getNum() == 0 || Cards[y][x - 1].equals(Cards[y][x]))) {
+                            x -= 2;
+                        }
+                    } else if (Cards[y][x].equals(Cards[y][x + 1])) {
+                        Cards[y][x].setNum(Cards[y][x].getNum() * 2);
+                        Cards[y][x + 1].setNum(0);
+                        MainActivity.getMainActivity().addScore(Cards[y][x].getNum());
+                        //TODO 这里可能会有bug产生
 //                      if (x>=0&Cards[y][x-1].getNum()==0){
 //                          x--;
 //                      }
-                  }
+                    }
                 }
 
             }
@@ -173,19 +214,20 @@ public class GameView extends GridLayout {
     }
 
     private void swipeRight() {
-        for (int y =0;y<4;y++) {
-            for (int x = 3; x >0; x--) {
-                if (Cards[y][x -1].getNum() > 0) {
+        for (int y = 0; y < 4; y++) {
+            for (int x = 3; x > 0; x--) {
+                if (Cards[y][x - 1].getNum() > 0) {
                     if (Cards[y][x].getNum() <= 0) {
-                        Cards[y][x].setNum(Cards[y][x -1].getNum());
-                        Cards[y][x -1].setNum(0);
+                        Cards[y][x].setNum(Cards[y][x - 1].getNum());
+                        Cards[y][x - 1].setNum(0);
 
-                        if (x <3 && (Cards[y][x + 1].getNum() == 0 || Cards[y][x + 1].equals(Cards[y][x]))) {
+                        if (x < 3 && (Cards[y][x + 1].getNum() == 0 || Cards[y][x + 1].equals(Cards[y][x]))) {
                             x += 2;
                         }
-                    } else if (Cards[y][x].equals(Cards[y][x -1])) {
-                        Cards[y][x].setNum(Cards[y][x-1].getNum() * 2);
+                    } else if (Cards[y][x].equals(Cards[y][x - 1])) {
+                        Cards[y][x].setNum(Cards[y][x - 1].getNum() * 2);
                         Cards[y][x - 1].setNum(0);
+                        MainActivity.getMainActivity().addScore(Cards[y][x].getNum());
                         //TODO 这里可能会有bug产生
 //                      if (x>=0&Cards[y][x-1].getNum()==0){
 //                          x--;
@@ -199,19 +241,20 @@ public class GameView extends GridLayout {
     }
 
     private void swipeUp() {
-        for (int x=0;x<4;x++) {
-            for (int y=0;y<3;y++) {
-                if (Cards[y+1][x].getNum()>0){
-                    if (Cards[y][x].getNum()<=0){
-                        Cards[y][x].setNum(Cards[y+1][x].getNum());
-                        Cards[y+1][x].setNum(0);
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 3; y++) {
+                if (Cards[y + 1][x].getNum() > 0) {
+                    if (Cards[y][x].getNum() <= 0) {
+                        Cards[y][x].setNum(Cards[y + 1][x].getNum());
+                        Cards[y + 1][x].setNum(0);
 
-                        if(y>0&&(Cards[y-1][x].getNum()==0||Cards[y-1][x].equals(Cards[y][x]))){
-                            y-=2;
+                        if (y > 0 && (Cards[y - 1][x].getNum() == 0 || Cards[y - 1][x].equals(Cards[y][x]))) {
+                            y -= 2;
                         }
-                    }else if (Cards[y][x].equals(Cards[y+1][x])){
-                        Cards[y][x].setNum(Cards[y][x].getNum()*2);
-                        Cards[y+1][x].setNum(0);
+                    } else if (Cards[y][x].equals(Cards[y + 1][x])) {
+                        Cards[y][x].setNum(Cards[y][x].getNum() * 2);
+                        Cards[y + 1][x].setNum(0);
+                        MainActivity.getMainActivity().addScore(Cards[y][x].getNum());
                         //TODO 这里可能会有bug产生
 //                      if (x>=0&Cards[y][x-1].getNum()==0){
 //                          x--;
@@ -225,19 +268,20 @@ public class GameView extends GridLayout {
     }
 
     private void swipeDown() {
-        for (int x=0;x<4;x++) {
-            for (int y=3;y>0;y--) {
-                if (Cards[y-1][x].getNum()>0){
-                    if (Cards[y][x].getNum()<=0){
-                        Cards[y][x].setNum(Cards[y-1][x].getNum());
-                        Cards[y-1][x].setNum(0);
+        for (int x = 0; x < 4; x++) {
+            for (int y = 3; y > 0; y--) {
+                if (Cards[y - 1][x].getNum() > 0) {
+                    if (Cards[y][x].getNum() <= 0) {
+                        Cards[y][x].setNum(Cards[y - 1][x].getNum());
+                        Cards[y - 1][x].setNum(0);
 
-                        if(y<3&&(Cards[y+1][x].getNum()==0||Cards[y+1][x].equals(Cards[y][x]))){
-                            y+=2;
+                        if (y < 3 && (Cards[y + 1][x].getNum() == 0 || Cards[y + 1][x].equals(Cards[y][x]))) {
+                            y += 2;
                         }
-                    }else if (Cards[y][x].equals(Cards[y-1][x])){
-                        Cards[y][x].setNum(Cards[y][x].getNum()*2);
-                        Cards[y-1][x].setNum(0);
+                    } else if (Cards[y][x].equals(Cards[y - 1][x])) {
+                        Cards[y][x].setNum(Cards[y][x].getNum() * 2);
+                        Cards[y - 1][x].setNum(0);
+                      MainActivity.getMainActivity().addScore(Cards[y][x].getNum());
                         //TODO 这里可能会有bug产生
 //                      if (x>=0&Cards[y][x-1].getNum()==0){
 //                          x--;
