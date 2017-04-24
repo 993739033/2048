@@ -131,12 +131,12 @@ public class GameView extends GridLayout {
                                 swipeRight();
                             } else if (offsetX < -5) {
                                 swipeLeft();
-                            } else {
-                                if (offsetY > 5) {
-                                    swipeDown();
-                                } else if (offsetY < -5) {
-                                    swipeUp();
-                                }
+                            }
+                            }else {
+                            if (offsetY > 5) {
+                                swipeDown();
+                            } else if (offsetY < -5) {
+                                swipeUp();
                             }
                         }
                         break;
@@ -173,11 +173,79 @@ public class GameView extends GridLayout {
     }
 
     private void swipeRight() {
+        for (int y =0;y<4;y++) {
+            for (int x = 3; x >0; x--) {
+                if (Cards[y][x -1].getNum() > 0) {
+                    if (Cards[y][x].getNum() <= 0) {
+                        Cards[y][x].setNum(Cards[y][x -1].getNum());
+                        Cards[y][x -1].setNum(0);
+
+                        if (x <3 && (Cards[y][x + 1].getNum() == 0 || Cards[y][x + 1].equals(Cards[y][x]))) {
+                            x += 2;
+                        }
+                    } else if (Cards[y][x].equals(Cards[y][x -1])) {
+                        Cards[y][x].setNum(Cards[y][x-1].getNum() * 2);
+                        Cards[y][x - 1].setNum(0);
+                        //TODO 这里可能会有bug产生
+//                      if (x>=0&Cards[y][x-1].getNum()==0){
+//                          x--;
+//                      }
+                    }
+                }
+
+            }
+        }
+
     }
 
     private void swipeUp() {
+        for (int x=0;x<4;x++) {
+            for (int y=0;y<3;y++) {
+                if (Cards[y+1][x].getNum()>0){
+                    if (Cards[y][x].getNum()<=0){
+                        Cards[y][x].setNum(Cards[y+1][x].getNum());
+                        Cards[y+1][x].setNum(0);
+
+                        if(y>0&&(Cards[y-1][x].getNum()==0||Cards[y-1][x].equals(Cards[y][x]))){
+                            y-=2;
+                        }
+                    }else if (Cards[y][x].equals(Cards[y+1][x])){
+                        Cards[y][x].setNum(Cards[y][x].getNum()*2);
+                        Cards[y+1][x].setNum(0);
+                        //TODO 这里可能会有bug产生
+//                      if (x>=0&Cards[y][x-1].getNum()==0){
+//                          x--;
+//                      }
+                    }
+                }
+
+            }
+        }
+
     }
 
     private void swipeDown() {
+        for (int x=0;x<4;x++) {
+            for (int y=3;y>0;y--) {
+                if (Cards[y-1][x].getNum()>0){
+                    if (Cards[y][x].getNum()<=0){
+                        Cards[y][x].setNum(Cards[y-1][x].getNum());
+                        Cards[y-1][x].setNum(0);
+
+                        if(y<3&&(Cards[y+1][x].getNum()==0||Cards[y+1][x].equals(Cards[y][x]))){
+                            y+=2;
+                        }
+                    }else if (Cards[y][x].equals(Cards[y-1][x])){
+                        Cards[y][x].setNum(Cards[y][x].getNum()*2);
+                        Cards[y-1][x].setNum(0);
+                        //TODO 这里可能会有bug产生
+//                      if (x>=0&Cards[y][x-1].getNum()==0){
+//                          x--;
+//                      }
+                    }
+                }
+            }
+        }
+
     }
 }
