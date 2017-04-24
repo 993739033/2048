@@ -17,7 +17,13 @@ public class Card extends FrameLayout {
 
     public void setNum(int num) {
         this.num = num;
-        label.setText(num+"");
+        if (num <= 0) {
+            label.setText("");
+        }
+        else if (num>=2){
+            label.setText(num+"");
+        }
+
     }
 
 
