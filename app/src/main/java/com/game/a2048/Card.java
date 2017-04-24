@@ -1,7 +1,7 @@
 package com.game.a2048;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
@@ -17,6 +17,7 @@ public class Card extends FrameLayout {
 
     public void setNum(int num) {
         this.num = num;
+        label.setText(num+"");
     }
 
 
@@ -24,13 +25,20 @@ public class Card extends FrameLayout {
         return getNum()==obj.getNum();
     }
 
-    private int num;
+    private int num=0;
     private TextView label;
-    public Card(@NonNull Context context) {
+    public Card( Context context) {
         super(context);
+
         label = new TextView(getContext());
+        label.setTextSize(32);
+        label.setBackgroundColor(0x33ffffff);
+
+        label.setGravity(Gravity.CENTER);
         LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        layoutParams.setMargins(30,30,0,0);
+        label.setText(getNum()+"");
+
         addView(label, layoutParams);
-        setNum(0);
     }
 }
