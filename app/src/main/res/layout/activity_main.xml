@@ -28,8 +28,15 @@
 <com.game.a2048.GameView
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:layout_weight="1"
-    >
+    android:layout_weight="1">
 
 </com.game.a2048.GameView>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="RE:ZERO"
+        android:textSize="36dp"
+        android:id="@+id/RE"
+        />
 </LinearLayout>

@@ -3,12 +3,14 @@ package com.game.a2048;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.graphics.Point;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.GridLayout;
 
 import java.util.ArrayList;
@@ -64,7 +66,7 @@ public class GameView extends GridLayout {
                 card = new Card(getContext());
                 Cards[x][y] = card;
 //                card.setNum(4);
-                Log.d("getnum", String.valueOf(card.getNum()));
+//                Log.d("getnum", String.valueOf(card.getNum()));
 //                FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(width, height);
                 //addView(card,layoutParams);
                 this.addView(card, width, height);
@@ -75,7 +77,12 @@ public class GameView extends GridLayout {
     private Card[][] Cards = new Card[4][4];
     private List<Point> emptyPoint = new ArrayList<>();
 
-    private void startGame() {
+
+
+
+
+
+    public  void startGame() {
         MainActivity.getMainActivity().clearScore();
         for (int x = 0; x < 4; x++) {
             for (int y = 0; y < 4; y++) {
@@ -85,6 +92,7 @@ public class GameView extends GridLayout {
         }
         getRandomNum();
         getRandomNum();
+        setColor();
 
 
     }
@@ -149,6 +157,7 @@ public class GameView extends GridLayout {
         setBackgroundColor(0xffbbada0);
         setColumnCount(4);
 
+
         setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -172,17 +181,21 @@ public class GameView extends GridLayout {
                             if (offsetX > 5) {
                                 swipeRight();
                                 getRandomNum();
+                                setColor();
                             } else if (offsetX < -5) {
                                 swipeLeft();
                                 getRandomNum();
+                                setColor();
                             }
                         } else {
                             if (offsetY > 5) {
                                 swipeDown();
                                 getRandomNum();
+                                setColor();
                             } else if (offsetY < -5) {
                                 swipeUp();
                                 getRandomNum();
+                                setColor();
                             }
                         }
                         break;
@@ -212,6 +225,7 @@ public class GameView extends GridLayout {
 //                      if (x>=0&Cards[y][x-1].getNum()==0){
 //                          x--;
 //                      }
+
                     }
                 }
 
@@ -270,7 +284,6 @@ public class GameView extends GridLayout {
 
             }
         }
-
     }
 
     private void swipeDown() {
@@ -297,5 +310,51 @@ public class GameView extends GridLayout {
             }
         }
 
+    }
+    Resources resources=getContext().getResources();
+    private void setColor() {
+        for (int x = 0; x < 4; x++) {
+            for (int y = 0; y < 4; y++) {
+                switch (Cards[x][y].getNum()) {
+                    case 2:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color1));
+                        break;
+                    case 4:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color2));
+                        break;
+                    case 8:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color3));
+                        break;
+                    case 16:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color4));
+                        break;
+                    case 32:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color5));
+                        break;
+                    case 64:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color6));
+                        break;
+                    case 128:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color7));
+                        break;
+                    case 256:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color8));
+                        break;
+                    case 512:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color9));
+                        break;
+                    case 1024:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color10));
+                        break;
+                    case 2048:
+                        Cards[x][y].getLabel().setBackgroundColor(resources.getColor(R.color.color11));
+                        break;
+                    default:
+                        Cards[x][y].getLabel().setBackgroundColor(0x33ffffff);
+                        break;
+                }
+            }
+
+        }
     }
 }
